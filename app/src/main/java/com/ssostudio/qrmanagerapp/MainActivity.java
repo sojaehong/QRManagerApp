@@ -3,20 +3,25 @@ package com.ssostudio.qrmanagerapp;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Result;
+import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.ssostudio.qrmanagerapp.model.BarcodeResultModel;
 import com.ssostudio.qrmanagerapp.scanner.BarcodeScanActivity;
-import com.ssostudio.qrmanagerapp.utility.AppUtility;
-import com.ssostudio.qrmanagerapp.utility.ImageManager;
+import com.ssostudio.qrmanagerapp.utility.BarcodeUtility;
+import com.ssostudio.qrmanagerapp.utility.ImageUtility;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private MaterialButton barcodeScanBtn, imageScanBtn;
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void onImageScanBtnClick() {
-        ImageManager.imageChooser(this);
+        ImageUtility.imageChooser(this);
     }
 
     private void onBarcodeScanBtnClick() {
@@ -67,10 +72,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != ImageManager.RESULT_OK)
+        if (resultCode != Activity.RESULT_OK)
             return;
 
-        if (requestCode == ImageManager.SELECT_PICTURE) {
+        if (requestCode == ImageUtility.SELECT_PICTURE) {
             onImageChooserActivityResult(requestCode, resultCode, data);
         } else {
             onBarcodeScanActivityResult(requestCode, resultCode, data);
@@ -95,6 +100,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 if (integrator != null) {
                     String resultContent = result.getContents();
+                    BarcodeResultModel model = BarcodeUtility.parsedResult(result);
+                    Log.d("resultTest", "" + model.getContents() + " : ResultType = " + model.getResult_type()
+                            + " : typeText : " + model.getResult_type().toString()
+                            + " : displayText : " + model.getDisplay_text()
+                            + " : barcodeType : " + model.getBarcode_type()
+                    );
                     integrator.addExtra("result", resultContent);
                     integrator.initiateScan();
                 }
@@ -105,7 +116,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void onImageChooserActivityResult(int requestCode, int resultCode, @Nullable Intent data){
         Uri selectedImageUri = data.getData();
         if (null != selectedImageUri) {
-            Log.d("resultTest", "");
+            Result result = BarcodeUtility.scanBarcodeImage(ImageUtility.uriToBitmap(this, selectedImageUri));
+
+            if (result == null)
+                return;
+
+            BarcodeResultModel model = BarcodeUtility.parsedResult(result);
+            Log.d("resultTest", "" + model.getContents() + " : ResultType = " + model.getResult_type()
+                    + " : typeText : " + model.getResult_type().toString()
+                    + " : displayText : " + model.getDisplay_text()
+                    + " : barcodeType : " + model.getBarcode_type()
+            );
         }
     }
 
