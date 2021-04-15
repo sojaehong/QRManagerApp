@@ -3,9 +3,19 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/lightGray</item>
+    </style>
+
+    <style name="OutlineButtonMain" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="IconButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="iconTint">@color/iconWhiteColor</item>
+        <item name="iconPadding">0dp</item>
     </style>
 
 </resources>
